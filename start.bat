@@ -1,4 +1,4 @@
-// Dibuat oleh AI pas masih 2023, cuma diubah dikit
+// Dibuat oleh AI
 
 @echo off
 chcp 65001 >nul
