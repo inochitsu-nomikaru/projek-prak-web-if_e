@@ -1,6 +1,8 @@
 <?php
+// menu.php
 require_once __DIR__ . '/backend/koneksi.php';
 
+// Ambil daftar menu dari database
 $query = "SELECT * FROM menu ORDER BY id_menu ASC";
 $result = $conn->query($query);
 $menus = [];
@@ -10,6 +12,7 @@ if ($result) {
     }
 }
 
+// Map stiker unik untuk setiap menu
 function getMenuSticker($id) {
     $stickers = [
         1 => ['emoji' => '🥤', 'tag' => 'Segar Pol', 'color' => '#fef3c7', 'border' => '#f59e0b'],
@@ -72,6 +75,7 @@ function getMenuSticker($id) {
             overflow-x: hidden;
         }
 
+        /* Responsive Page Wrapper */
         .app-container {
             width: 100%;
             min-height: 100vh;
@@ -84,6 +88,7 @@ function getMenuSticker($id) {
             padding-bottom: 120px;
         }
 
+        /* Sticky Full-Width Header (Konsisten di Pojok Kiri & Kanan) */
         .app-header {
             position: sticky;
             top: 0;
@@ -105,9 +110,10 @@ function getMenuSticker($id) {
             height: 40px;
             border-radius: 50%;
             background: var(--pink-light);
-            border: 1px solid var(--pink-soft);
+            border: 1.5px solid var(--pink-soft);
             color: var(--pink-primary);
             font-size: 1.1rem;
+            font-weight: 800;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -118,6 +124,7 @@ function getMenuSticker($id) {
 
         .back-btn:hover {
             background: var(--pink-primary);
+            border-color: var(--pink-primary);
             color: #fff;
         }
 
@@ -147,20 +154,37 @@ function getMenuSticker($id) {
             font-weight: 500;
         }
 
-        .help-pill {
-            font-size: clamp(0.75rem, 1.1vw, 0.85rem);
-            padding: 6px 14px;
-            background: #fff;
+        /* Tombol Masuk (Login Karyawan) */
+        .login-btn {
+            font-size: clamp(0.78rem, 1.1vw, 0.86rem);
+            padding: 8px 16px;
+            background: var(--pink-light);
             border: 1.5px solid var(--pink-soft);
-            color: var(--pink-dark);
-            border-radius: 20px;
-            font-weight: 700;
-            display: flex;
+            color: var(--pink-primary);
+            border-radius: 999px;
+            font-weight: 800;
+            text-decoration: none;
+            display: inline-flex;
             align-items: center;
-            gap: 4px;
+            gap: 6px;
             flex-shrink: 0;
+            box-shadow: 0 2px 8px rgba(255, 77, 136, 0.08);
+            transition: all 0.2s ease;
         }
 
+        .login-btn:hover {
+            background: var(--pink-primary);
+            border-color: var(--pink-primary);
+            color: #ffffff;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(255, 77, 136, 0.28);
+        }
+
+        .login-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Content Container (Melebar hingga 1140px di Desktop) */
         .content-wrapper {
             width: 100%;
             max-width: 1140px;
@@ -169,6 +193,7 @@ function getMenuSticker($id) {
             flex-direction: column;
         }
 
+        /* Welcome Banner & Guidance */
         .menu-banner {
             margin: 18px 0 12px;
             background: linear-gradient(135deg, #fff0f5 0%, #ffe4ee 100%);
@@ -204,6 +229,7 @@ function getMenuSticker($id) {
             line-height: 1.4;
         }
 
+        /* Filter Tabs */
         .category-tabs {
             display: flex;
             gap: 10px;
@@ -248,6 +274,7 @@ function getMenuSticker($id) {
             box-shadow: 0 4px 12px rgba(255, 77, 136, 0.35);
         }
 
+        /* Responsive Menu Grid (1 Kolom Mobile -> 2-3 Kolom Desktop) */
         .menu-list {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
@@ -277,6 +304,7 @@ function getMenuSticker($id) {
             transform: scale(0.99);
         }
 
+        /* Sticker Container */
         .sticker-wrapper {
             width: 80px;
             height: 80px;
@@ -311,6 +339,7 @@ function getMenuSticker($id) {
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
+        /* Menu Details */
         .menu-info {
             flex: 1;
             display: flex;
@@ -347,6 +376,7 @@ function getMenuSticker($id) {
             color: var(--pink-primary);
         }
 
+        /* Action Buttons */
         .btn-add {
             background: var(--pink-light);
             color: var(--pink-primary);
@@ -369,6 +399,7 @@ function getMenuSticker($id) {
             border-color: var(--pink-primary);
         }
 
+        /* Quantity Controller (Plus, Minus, Delete) */
         .qty-controls {
             display: none;
             align-items: center;
@@ -424,6 +455,7 @@ function getMenuSticker($id) {
             margin-left: 2px;
         }
 
+        /* Bottom Floating Order Bar (Full di Mobile, Kapsul Melayang di Desktop) */
         .cart-sticky-bar {
             position: fixed;
             bottom: 0;
@@ -498,6 +530,7 @@ function getMenuSticker($id) {
             transform: scale(0.96);
         }
 
+        /* Modal Overlay (Bottom Sheet di Mobile -> Centered Dialog di Desktop) */
         .modal-overlay {
             position: fixed;
             inset: 0;
@@ -577,6 +610,7 @@ function getMenuSticker($id) {
             justify-content: center;
         }
 
+        /* Order Review Item List in Modal */
         .review-order-box {
             background: var(--pink-light);
             border-radius: 16px;
@@ -609,6 +643,7 @@ function getMenuSticker($id) {
             color: var(--pink-primary);
         }
 
+        /* Customer Info Form */
         .form-group {
             margin-bottom: 14px;
             text-align: left;
@@ -682,18 +717,21 @@ function getMenuSticker($id) {
 <body>
 
 <div class="app-container">
+    <!-- Header Full-Width -->
     <header class="app-header">
         <a href="index.php" class="back-btn" title="Kembali ke Beranda">←</a>
         <div class="header-title-box">
             <h1>Resto <span>Icikiwir</span></h1>
             <div class="header-subtitle">Pilih menu favoritmu di bawah ini</div>
         </div>
-        <div class="help-pill">
-            Gejesgejes
-        </div>
+        <a href="login.php" class="login-btn" title="Login Karyawan">
+            <span>Masuk</span>
+        </a>
     </header>
 
+    <!-- Main Responsive Content Wrapper -->
     <div class="content-wrapper">
+        <!-- Welcome & Order Tip Banner -->
         <section class="menu-banner">
             <div class="banner-icon">🍜</div>
             <div class="banner-text">
@@ -702,6 +740,7 @@ function getMenuSticker($id) {
             </div>
         </section>
 
+        <!-- Filter Category Tabs -->
         <div class="category-tabs">
             <button class="cat-tab active" onclick="filterMenu('all', this)">Semua Menu</button>
             <button class="cat-tab" onclick="filterMenu('mie', this)">🍜 Aneka Mie</button>
@@ -709,6 +748,7 @@ function getMenuSticker($id) {
             <button class="cat-tab" onclick="filterMenu('camilan', this)">🥟 Camilan Gurih</button>
         </div>
 
+        <!-- Menu List (Responsive Grid) -->
         <main class="menu-list" id="menuContainer">
             <?php foreach ($menus as $m): 
                 $id = (int)$m['id_menu'];
@@ -726,11 +766,13 @@ function getMenuSticker($id) {
                 }
             ?>
             <div class="menu-card" data-category="<?= $cat; ?>" data-id="<?= $id; ?>">
+                <!-- Sticker Menu -->
                 <div class="sticker-wrapper" style="background: <?= $stk['color']; ?>; border-color: <?= $stk['border']; ?>;">
                     <span class="sticker-emoji"><?= $stk['emoji']; ?></span>
                     <span class="sticker-tag" style="background: <?= $stk['border']; ?>;"><?= $stk['tag']; ?></span>
                 </div>
 
+                <!-- Detail Menu -->
                 <div class="menu-info">
                     <div>
                         <h2 class="menu-name"><?= $nama; ?></h2>
@@ -739,10 +781,12 @@ function getMenuSticker($id) {
                     <div class="menu-bottom-row">
                         <div class="menu-price">Rp <?= number_format($harga, 0, ',', '.'); ?></div>
                         
+                        <!-- Tombol Tambah Pesanan -->
                         <button class="btn-add" id="btnAdd-<?= $id; ?>" onclick="tambahItem(<?= $id; ?>, '<?= addslashes($nama); ?>', <?= $harga; ?>)">
                             <span>+</span> Tambah
                         </button>
 
+                        <!-- Kontrol Jumlah (Kurang, Tambah, Hapus) -->
                         <div class="qty-controls" id="qtyBox-<?= $id; ?>">
                             <button class="qty-btn" onclick="kurangItem(<?= $id; ?>)">−</button>
                             <span class="qty-val" id="qtyText-<?= $id; ?>">1</span>
@@ -756,6 +800,7 @@ function getMenuSticker($id) {
         </main>
     </div>
 
+    <!-- Sticky Floating Bottom Cart Bar -->
     <div class="cart-sticky-bar" id="cartStickyBar">
         <div class="cart-summary">
             <div class="cart-count">
@@ -770,7 +815,8 @@ function getMenuSticker($id) {
     </div>
 </div>
 
-<div class="modal-overlay" id="checkoutModal" onclick="if(event.target === this) tutupModalKonfirmasi()">
+<!-- Modal Konfirmasi Pesanan Solid & Isi Data Meja/Pelanggan -->
+<div class="modal-overlay" id="checkoutModal">
     <div class="modal-content">
         <div class="modal-header">
             <div class="modal-title">
@@ -779,9 +825,12 @@ function getMenuSticker($id) {
             <button class="close-modal-btn" onclick="tutupModalKonfirmasi()">&times;</button>
         </div>
 
+        <!-- Ringkasan Item Pesanan -->
         <div class="review-order-box" id="modalReviewList">
+            <!-- Diisi lewat Javascript -->
         </div>
 
+        <!-- Form Masukkan Nomor Meja, Atas Nama, Kontak Email -->
         <form id="orderForm" onsubmit="kirimPesanan(event)">
             <div class="form-row-grid">
                 <div class="form-group">
@@ -812,7 +861,9 @@ function getMenuSticker($id) {
 </div>
 
 <script>
+// State keranjang pesanan
 let cart = {}; 
+// Struktur cart: { [id_menu]: { id_menu, nama, harga, jumlah, req } }
 
 function updateUI(id) {
     const btnAdd = document.getElementById(`btnAdd-${id}`);
@@ -934,6 +985,7 @@ function tutupModalKonfirmasi() {
     document.getElementById('checkoutModal').style.display = 'none';
 }
 
+// Filter kategori
 function filterMenu(cat, el) {
     document.querySelectorAll('.cat-tab').forEach(b => b.classList.remove('active'));
     el.classList.add('active');
@@ -948,6 +1000,7 @@ function filterMenu(cat, el) {
     });
 }
 
+// Kirim pesanan ke backend
 async function kirimPesanan(e) {
     e.preventDefault();
 
@@ -965,6 +1018,7 @@ async function kirimPesanan(e) {
     btnSubmit.disabled = true;
     btnSubmit.innerHTML = '<span>⏳</span> Memproses Pesanan...';
 
+    // Format array items
     const items = Object.values(cart).map(item => ({
         id_menu: item.id_menu,
         jumlah: item.jumlah,
@@ -991,6 +1045,7 @@ async function kirimPesanan(e) {
         const result = await response.json();
 
         if (result.success) {
+            // Berhasil: arahkan kembali ke index.php
             window.location.href = 'index.php?status=sukses';
         } else {
             alert('Gagal mengirim pesanan: ' + (result.message || 'Terjadi kesalahan sistem.'));

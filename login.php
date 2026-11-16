@@ -1,29 +1,14 @@
 <?php
-require_once __DIR__ . '/backend/session_check.php';
+// login.php
+session_start();
 
-// Jika sudah login dan belum timeout, arahkan langsung ke pesanan.php
-if (isset($_SESSION['karyawan']) && !empty($_SESSION['karyawan'])) {
-    $now = time();
-    if (isset($_SESSION['last_activity']) && ($now - $_SESSION['last_activity'] <= SESSION_TIMEOUT_SECONDS)) {
-        header("Location: pesanan.php");
-        exit();
-    }
+// Jika sudah login, langsung ke pesanan.php
+if (isset($_SESSION['karyawan'])) {
+    header("Location: pesanan.php");
+    exit();
 }
 
-$errorParam = $_GET['error'] ?? '';
-$errorMsg = '';
-$alertType = 'error';
-
-if ($errorParam === 'timeout') {
-    $errorMsg = '⏰ Sesi Anda telah berakhir karena tidak ada aktivitas selama 5 menit. Demi keamanan dapur, silakan login kembali!';
-    $alertType = 'warning';
-} elseif ($errorParam === 'tab_closed' || $errorParam === 'unauthorized') {
-    $errorMsg = '🔒 Tab atau aplikasi sebelumnya telah ditutup. Silakan masukkan username dan password ulang.';
-    $alertType = 'warning';
-} elseif (!empty($errorParam)) {
-    $errorMsg = $errorParam;
-    $alertType = 'error';
-}
+$error = $_GET['error'] ?? '';
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -68,7 +53,7 @@ if ($errorParam === 'timeout') {
         .login-card {
             width: 100%;
             max-width: 420px;
-            background: rgba(255, 255, 255, 0.96);
+            background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(12px);
             border-radius: 28px;
             border: 2px solid var(--pink-soft);
@@ -109,29 +94,19 @@ if ($errorParam === 'timeout') {
             margin-bottom: 24px;
         }
 
-        .alert-box {
-            padding: 12px 14px;
-            border-radius: 14px;
+        .error-alert {
+            background: #fee2e2;
+            border: 1px solid #f87171;
+            color: #b91c1c;
+            padding: 10px 14px;
+            border-radius: 12px;
             font-size: 0.83rem;
             font-weight: 600;
             margin-bottom: 18px;
             display: flex;
-            align-items: flex-start;
-            gap: 10px;
+            align-items: center;
+            gap: 8px;
             text-align: left;
-            line-height: 1.4;
-        }
-
-        .alert-box.error {
-            background: #fee2e2;
-            border: 1.5px solid #f87171;
-            color: #991b1b;
-        }
-
-        .alert-box.warning {
-            background: #fffbeb;
-            border: 1.5px solid #f59e0b;
-            color: #92400e;
         }
 
         .form-group {
@@ -203,24 +178,11 @@ if ($errorParam === 'timeout') {
             transform: scale(0.98);
         }
 
-        .security-badge {
-            margin-top: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            font-size: 0.72rem;
-            color: #6b7280;
-            background: #fdf2f7;
-            padding: 6px 12px;
-            border-radius: 20px;
-        }
-
         .back-link {
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            margin-top: 16px;
+            margin-top: 22px;
             font-size: 0.85rem;
             font-weight: 700;
             color: var(--text-muted);
@@ -240,20 +202,20 @@ if ($errorParam === 'timeout') {
     <h1 class="login-title">Masuk Sebagai <span>Karyawan</span></h1>
     <p class="login-sub">Portal Manajemen Pesanan Dapur & Kasir</p>
 
-    <?php if (!empty($errorMsg)): ?>
-    <div class="alert-box <?= $alertType; ?>">
-        <span><?= ($alertType === 'warning') ? '⚠️' : '⛔'; ?></span>
-        <span><?= htmlspecialchars($errorMsg); ?></span>
+    <?php if (!empty($error)): ?>
+    <div class="error-alert">
+        <span>⚠️</span>
+        <span><?= htmlspecialchars($error); ?></span>
     </div>
     <?php endif; ?>
 
-    <!-- Form Login Karyawan (Diproteksi Anti SQL Injection di backend/auth.php) -->
-    <form action="backend/auth.php" method="POST" autocomplete="off">
+    <!-- Form Login Karyawan menuju backend/auth.php yang nantinya mengarah ke pesanan.php -->
+    <form action="backend/auth.php" method="POST">
         <div class="form-group">
             <label for="username">Username</label>
             <div class="form-input-wrap">
                 <span class="input-icon">👤</span>
-                <input type="text" id="username" name="username" class="form-input" placeholder="Masukkan username" required maxlength="20" autofocus>
+                <input type="text" id="username" name="username" class="form-input" placeholder="Masukkan username" required autocomplete="username">
             </div>
         </div>
 
@@ -261,7 +223,7 @@ if ($errorParam === 'timeout') {
             <label for="password">Password</label>
             <div class="form-input-wrap">
                 <span class="input-icon">🔒</span>
-                <input type="password" id="password" name="password" class="form-input" placeholder="Masukkan password" required maxlength="32">
+                <input type="password" id="password" name="password" class="form-input" placeholder="Masukkan password" required autocomplete="current-password">
             </div>
         </div>
 
@@ -270,10 +232,6 @@ if ($errorParam === 'timeout') {
         </button>
     </form>
 
-    <div class="security-badge">
-        <span>🛡️</span> Dilindungi Sistem Keamanan Sesi 5 Menit & Anti-Injeksi
-    </div>
-
     <div>
         <a href="index.php" class="back-link">
             <span>←</span> Kembali ke Halaman Utama
@@ -281,12 +239,6 @@ if ($errorParam === 'timeout') {
     </div>
 </div>
 
-<script>
-    // Bersihkan sesi tab lama di browser jika ada
-    try {
-        sessionStorage.removeItem('resto_tab_active');
-    } catch(e) {}
-</script>
-
 </body>
 </html>
+

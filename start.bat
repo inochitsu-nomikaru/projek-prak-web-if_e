@@ -1,5 +1,3 @@
-// Dibuat oleh AI
-
 @echo off
 chcp 65001 >nul
 title Resto Icikiwir Gejesgejes - Server Tailscale
