@@ -1,3 +1,5 @@
+// Dibuat oleh AI pas masih 2023, cuma diubah dikit
+
 @echo off
 chcp 65001 >nul
 title Resto Icikiwir Gejesgejes - Server Tailscale
