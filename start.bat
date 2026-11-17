@@ -3,9 +3,7 @@ chcp 65001 >nul
 title Resto Icikiwir Gejesgejes - Server Tailscale
 cls
 
-echo ================================================================
 echo     RESTO ICIKIWIR GEJESGEJES - WEB PEMESANAN SMARTPHONE
-echo ================================================================
 echo.
 
 :: 1. Cek & Set PHP Executable
