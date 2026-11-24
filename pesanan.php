@@ -1,11 +1,10 @@
 <?php
-session_start();
+require_once __DIR__ . '/backend/session_check.php';
 require_once __DIR__ . '/backend/koneksi.php';
 
-if (!isset($_SESSION['karyawan'])) {
-    header("Location: login.php");
-    exit();
-}
+pastikan_karyawan_login(false);
+
+$authToken = $_SESSION['auth_token'] ?? '';
 
 $query = "
     SELECT p.id_custom, p.nama_custom, p.nomor_meja, p.email, p.tanggal, p.selesai,
@@ -136,6 +135,7 @@ foreach ($orders as $o) {
             align-items: center;
             justify-content: space-between;
             gap: 12px;
+            flex-wrap: wrap;
             box-shadow: 0 2px 12px rgba(255, 77, 136, 0.06);
         }
 
@@ -163,6 +163,7 @@ foreach ($orders as $o) {
             display: flex;
             align-items: center;
             gap: 8px;
+            flex-wrap: wrap;
             flex-shrink: 0;
         }
 
@@ -176,6 +177,20 @@ foreach ($orders as $o) {
             align-items: center;
             gap: 5px;
             transition: all 0.2s ease;
+            cursor: pointer;
+            border: none;
+            white-space: nowrap;
+        }
+
+        .btn-home {
+            background: #ffffff;
+            color: var(--text-dark);
+            border: 1px solid var(--pink-soft);
+        }
+
+        .btn-home:hover {
+            background: var(--pink-light);
+            color: var(--pink-primary);
         }
 
         .btn-refresh {
@@ -198,6 +213,29 @@ foreach ($orders as $o) {
         .btn-logout:hover {
             background: #ef4444;
             color: #ffffff;
+        }
+
+        .session-timer-bar {
+            width: 100%;
+            background: #fff0f6;
+            border-bottom: 1px solid var(--pink-soft);
+            padding: 8px clamp(16px, 3vw, 32px);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--pink-dark);
+        }
+
+        .timer-badge {
+            background: #ffffff;
+            border: 1px solid var(--pink-soft);
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-family: monospace;
+            font-size: 0.84rem;
+            color: var(--pink-primary);
         }
 
         .content-wrapper {
@@ -331,6 +369,7 @@ foreach ($orders as $o) {
             justify-content: space-between;
             border-bottom: 1px dashed var(--pink-soft);
             background: #fffdfd;
+            gap: 8px;
         }
 
         .order-id-badge {
@@ -352,6 +391,7 @@ foreach ($orders as $o) {
             display: inline-flex;
             align-items: center;
             gap: 4px;
+            white-space: nowrap;
         }
 
         .card-body {
@@ -369,10 +409,16 @@ foreach ($orders as $o) {
             margin-bottom: 12px;
         }
 
+        .customer-meta > div:first-child {
+            min-width: 0;
+            flex: 1;
+        }
+
         .cust-name {
             font-size: 1.05rem;
             font-weight: 800;
             color: var(--text-dark);
+            word-break: break-word;
         }
 
         .cust-email {
@@ -391,6 +437,7 @@ foreach ($orders as $o) {
             font-weight: 600;
             text-align: right;
             white-space: nowrap;
+            flex-shrink: 0;
         }
 
         .items-box {
@@ -424,12 +471,14 @@ foreach ($orders as $o) {
         .item-name-qty {
             font-weight: 700;
             color: var(--text-dark);
+            word-break: break-word;
         }
 
         .item-subtotal {
             font-weight: 800;
             color: var(--pink-dark);
             white-space: nowrap;
+            flex-shrink: 0;
         }
 
         .order-total-row {
@@ -459,6 +508,7 @@ foreach ($orders as $o) {
             align-items: flex-start;
             gap: 6px;
             line-height: 1.4;
+            word-break: break-word;
         }
 
         .order-note-text strong {
@@ -474,6 +524,7 @@ foreach ($orders as $o) {
             align-items: center;
             justify-content: space-between;
             gap: 10px;
+            flex-wrap: wrap;
         }
 
         .status-badge {
@@ -484,6 +535,7 @@ foreach ($orders as $o) {
             display: inline-flex;
             align-items: center;
             gap: 5px;
+            white-space: nowrap;
         }
 
         .status-badge.pending {
@@ -510,6 +562,7 @@ foreach ($orders as $o) {
             align-items: center;
             gap: 6px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+            white-space: nowrap;
         }
 
         .btn-toggle-status.mark-done {
@@ -578,19 +631,27 @@ foreach ($orders as $o) {
         <div class="brand-title">
             <h1>List Pesanan <span>Icikiwir</span></h1>
             <div class="user-tag">
-                Karyawan : <b><?= htmlspecialchars($_SESSION['karyawan']); ?></b>
+                <span>👩‍🍳</span> Karyawan: <b><?= htmlspecialchars($_SESSION['karyawan']); ?></b>
             </div>
         </div>
 
         <div class="header-actions">
-            <a href="pesanan.php" class="btn-action-icon btn-refresh" title="Perbarui Daftar">
-                Refresh
+            <a href="index.php" class="btn-action-icon btn-home" title="Kembali ke Beranda" onclick="isIntendedNavigation = true;">
+                <span>🏠</span> Beranda
             </a>
-            <a href="backend/auth.php?action=logout" class="btn-action-icon btn-logout" title="Keluar">
-                Logout
+            <a href="pesanan.php" class="btn-action-icon btn-refresh" title="Perbarui Daftar" onclick="isIntendedNavigation = true;">
+                <span>🔄</span> Refresh
             </a>
+            <button onclick="logoutManual()" class="btn-action-icon btn-logout" title="Keluar">
+                <span>🚪</span> Logout
+            </button>
         </div>
     </header>
+
+    <div class="session-timer-bar">
+        <span>🛡️ Kunci Otomatis (5 Mnt Idle):</span>
+        <span class="timer-badge" id="timerBadge">05:00</span>
+    </div>
 
     <div class="content-wrapper">
         <section class="stats-grid">
@@ -609,9 +670,9 @@ foreach ($orders as $o) {
         </section>
 
         <nav class="filter-nav">
-            <button class="filter-pill active" onclick="filterPesanan('all', this)">Semua (<?= $total_pesanan; ?>)</button>
-            <button class="filter-pill" onclick="filterPesanan('pending', this)">⏳ Belum Selesai (<?= $total_pending; ?>)</button>
-            <button class="filter-pill" onclick="filterPesanan('done', this)">✅ Selesai (<?= $total_selesai; ?>)</button>
+            <button class="filter-pill active" onclick="filterPesanan('all', this)">Semua (<span id="pillTotal"><?= $total_pesanan; ?></span>)</button>
+            <button class="filter-pill" onclick="filterPesanan('pending', this)">⏳ Belum Selesai (<span id="pillPending"><?= $total_pending; ?></span>)</button>
+            <button class="filter-pill" onclick="filterPesanan('done', this)">✅ Selesai (<span id="pillDone"><?= $total_selesai; ?></span>)</button>
         </nav>
 
         <main class="orders-feed" id="ordersList">
@@ -702,7 +763,99 @@ foreach ($orders as $o) {
 </div>
 
 <script>
+const SERVER_AUTH_TOKEN = "<?= $authToken; ?>";
+let isIntendedNavigation = false;
+
+(function checkTabIsolation() {
+    const existingTabToken = sessionStorage.getItem('resto_tab_active');
+    if (!existingTabToken) {
+        sessionStorage.setItem('resto_tab_active', SERVER_AUTH_TOKEN);
+    } else if (existingTabToken !== SERVER_AUTH_TOKEN) {
+        sessionStorage.setItem('resto_tab_active', SERVER_AUTH_TOKEN);
+    }
+})();
+
+window.addEventListener('pagehide', function(event) {
+    if (!isIntendedNavigation) {
+        navigator.sendBeacon('backend/auth.php?action=logout');
+    }
+});
+
+window.addEventListener('beforeunload', function(event) {
+    if (!isIntendedNavigation) {
+        navigator.sendBeacon('backend/auth.php?action=logout');
+    }
+});
+
+const TIMEOUT_LIMIT = 300;
+let remainingSeconds = TIMEOUT_LIMIT;
+let lastHeartbeatTouch = Date.now();
+
+function updateTimerDisplay() {
+    const minutes = Math.floor(remainingSeconds / 60);
+    const seconds = remainingSeconds % 60;
+    const badge = document.getElementById('timerBadge');
+    if (badge) {
+        badge.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        if (remainingSeconds <= 30) {
+            badge.style.color = '#ef4444';
+            badge.style.borderColor = '#ef4444';
+        } else {
+            badge.style.color = 'var(--pink-primary)';
+            badge.style.borderColor = 'var(--pink-soft)';
+        }
+    }
+}
+
+const countdownInterval = setInterval(() => {
+    remainingSeconds--;
+    if (remainingSeconds <= 0) {
+        clearInterval(countdownInterval);
+        logoutOtomatis('timeout');
+    } else {
+        updateTimerDisplay();
+    }
+}, 1000);
+
+function resetAktivitas() {
+    remainingSeconds = TIMEOUT_LIMIT;
+    updateTimerDisplay();
+
+    const now = Date.now();
+    if (now - lastHeartbeatTouch > 15000) {
+        lastHeartbeatTouch = now;
+        fetch('backend/heartbeat.php?action=touch', { method: 'GET' })
+            .then(res => res.json())
+            .then(data => {
+                if (!data.authenticated) {
+                    logoutOtomatis('timeout');
+                }
+            })
+            .catch(() => {});
+    }
+}
+
+['mousemove', 'mousedown', 'keydown', 'touchstart', 'scroll', 'click'].forEach(evt => {
+    window.addEventListener(evt, resetAktivitas, { passive: true });
+});
+
+function logoutOtomatis(reason) {
+    isIntendedNavigation = true;
+    sessionStorage.removeItem('resto_tab_active');
+    window.location.href = `backend/auth.php?action=logout&reason=${encodeURIComponent(reason)}`;
+}
+
+function logoutManual() {
+    if (confirm('Apakah Anda yakin ingin keluar dari portal pesanan?')) {
+        isIntendedNavigation = true;
+        sessionStorage.removeItem('resto_tab_active');
+        window.location.href = 'backend/auth.php?action=logout';
+    }
+}
+
 async function ubahStatus(id_custom, statusTarget) {
+    resetAktivitas();
+
     const btnContainer = document.getElementById(`btnContainer-${id_custom}`);
     const badge = document.getElementById(`badge-${id_custom}`);
     const card = document.getElementById(`orderCard-${id_custom}`);
@@ -723,6 +876,12 @@ async function ubahStatus(id_custom, statusTarget) {
                 selesai: statusTarget
             })
         });
+
+        if (response.status === 401) {
+            alert('Sesi Anda telah berakhir karena tidak ada aktivitas selama 5 menit. Silakan login kembali!');
+            logoutOtomatis('timeout');
+            return;
+        }
 
         const result = await response.json();
 
@@ -751,10 +910,12 @@ async function ubahStatus(id_custom, statusTarget) {
             updateStatistikCount();
         } else {
             alert('Gagal mengubah status: ' + (result.message || 'Terjadi kesalahan sistem.'));
+            isIntendedNavigation = true;
             window.location.reload();
         }
     } catch (err) {
         alert('Gagal menghubungi server.');
+        isIntendedNavigation = true;
         window.location.reload();
     }
 }
@@ -763,6 +924,7 @@ function updateStatistikCount() {
     const allCards = document.querySelectorAll('.order-card');
     let pendingCount = 0;
     let doneCount = 0;
+    const totalCount = allCards.length;
 
     allCards.forEach(c => {
         if (c.dataset.status === 'done') {
@@ -772,13 +934,23 @@ function updateStatistikCount() {
         }
     });
 
+    const statTotal = document.getElementById('statTotal');
     const statPending = document.getElementById('statPending');
     const statDone = document.getElementById('statDone');
+    if (statTotal) statTotal.textContent = totalCount;
     if (statPending) statPending.textContent = pendingCount;
     if (statDone) statDone.textContent = doneCount;
+
+    const pillTotal = document.getElementById('pillTotal');
+    const pillPending = document.getElementById('pillPending');
+    const pillDone = document.getElementById('pillDone');
+    if (pillTotal) pillTotal.textContent = totalCount;
+    if (pillPending) pillPending.textContent = pendingCount;
+    if (pillDone) pillDone.textContent = doneCount;
 }
 
 function filterPesanan(mode, el) {
+    resetAktivitas();
     document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
     el.classList.add('active');
 
@@ -791,6 +963,30 @@ function filterPesanan(mode, el) {
         }
     });
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => { isIntendedNavigation = true; });
+    });
+});
+
+window.addEventListener('keydown', function(e) {
+    if ((e.which || e.keyCode) === 116 || (e.ctrlKey && (e.which || e.keyCode) === 82)) {
+        isIntendedNavigation = true;
+    }
+});
+
+let cachedOrderCount = <?= $total_pesanan; ?>;
+setInterval(async () => {
+    try {
+        const res = await fetch('backend/get_pesanan.php?filter=all');
+        const data = await res.json();
+        if (data.success && data.orders && data.orders.length !== cachedOrderCount) {
+            isIntendedNavigation = true;
+            window.location.reload();
+        }
+    } catch (e) {}
+}, 10000);
 </script>
 
 </body>
