@@ -1,8 +1,6 @@
 <?php
-// login.php
 session_start();
 
-// Jika sudah login, langsung ke pesanan.php
 if (isset($_SESSION['karyawan'])) {
     header("Location: pesanan.php");
     exit();
@@ -16,7 +14,6 @@ $error = $_GET['error'] ?? '';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Masuk Sebagai Karyawan - Resto Icikiwir Gejesgejes</title>
-    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fredoka:wght@600;700&display=swap" rel="stylesheet">
@@ -209,7 +206,6 @@ $error = $_GET['error'] ?? '';
     </div>
     <?php endif; ?>
 
-    <!-- Form Login Karyawan menuju backend/auth.php yang nantinya mengarah ke pesanan.php -->
     <form action="backend/auth.php" method="POST">
         <div class="form-group">
             <label for="username">Username</label>

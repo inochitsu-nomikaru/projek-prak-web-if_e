@@ -1,15 +1,12 @@
 <?php
-// pesanan.php
 session_start();
 require_once __DIR__ . '/backend/koneksi.php';
 
-// Cek hak akses karyawan
 if (!isset($_SESSION['karyawan'])) {
     header("Location: login.php");
     exit();
 }
 
-// Ambil semua pesanan dan rincian menunya
 $query = "
     SELECT p.id_custom, p.nama_custom, p.nomor_meja, p.email, p.tanggal, p.selesai,
            d.id_detail, d.jumlah, d.req,
@@ -43,7 +40,6 @@ if ($result) {
             $subtotal = $row['harga'] * $row['jumlah'];
             $orders[$id]['total_harga'] += $subtotal;
 
-            // Kumpulkan catatan unik per pesanan agar tidak duplikat antar item
             $reqText = trim((string)($row['req'] ?? ''));
             if ($reqText !== '' && !in_array($reqText, $orders[$id]['catatan_list'], true)) {
                 $orders[$id]['catatan_list'][] = $reqText;
@@ -61,7 +57,6 @@ if ($result) {
     }
 }
 
-// Hitung statistik pesanan
 $total_pesanan = count($orders);
 $total_pending = 0;
 $total_selesai = 0;
@@ -79,7 +74,6 @@ foreach ($orders as $o) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Daftar Pesanan - Resto Icikiwir Gejesgejes</title>
-    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fredoka:wght@600;700&display=swap" rel="stylesheet">
@@ -128,7 +122,6 @@ foreach ($orders as $o) {
             padding-bottom: 48px;
         }
 
-        /* Top Header Full-Width (Pojok Kiri & Kanan Selalu Konsisten) */
         .dash-header {
             position: sticky;
             top: 0;
@@ -207,7 +200,6 @@ foreach ($orders as $o) {
             color: #ffffff;
         }
 
-        /* Content Wrapper (Melebar hingga 1200px di Desktop) */
         .content-wrapper {
             width: 100%;
             max-width: 1200px;
@@ -216,7 +208,6 @@ foreach ($orders as $o) {
             flex-direction: column;
         }
 
-        /* Stats Grid */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -259,7 +250,6 @@ foreach ($orders as $o) {
             margin-top: 3px;
         }
 
-        /* Filter Tabs */
         .filter-nav {
             display: flex;
             gap: 10px;
@@ -304,7 +294,6 @@ foreach ($orders as $o) {
             box-shadow: 0 4px 10px rgba(255, 77, 136, 0.3);
         }
 
-        /* Responsive Orders Grid (1 Kolom Mobile -> 2-3 Kolom Desktop) */
         .orders-feed {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
@@ -335,7 +324,6 @@ foreach ($orders as $o) {
             background: #fafdfc;
         }
 
-        /* Card Header */
         .card-top {
             padding: 14px 16px;
             display: flex;
@@ -366,7 +354,6 @@ foreach ($orders as $o) {
             gap: 4px;
         }
 
-        /* Customer Details */
         .card-body {
             padding: 16px;
             flex: 1;
@@ -406,7 +393,6 @@ foreach ($orders as $o) {
             white-space: nowrap;
         }
 
-        /* Items List */
         .items-box {
             background: var(--pink-light);
             border-radius: 14px;
@@ -462,7 +448,6 @@ foreach ($orders as $o) {
             color: var(--pink-primary);
         }
 
-        /* Catatan Keseluruhan (Teks Biasa Kontras di Bawah Total Tagihan) */
         .order-note-text {
             margin-top: 8px;
             padding-top: 8px;
@@ -481,7 +466,6 @@ foreach ($orders as $o) {
             color: var(--pink-dark);
         }
 
-        /* Card Footer & Toggle Status */
         .card-footer {
             padding: 12px 16px;
             background: #ffffff;
@@ -514,7 +498,6 @@ foreach ($orders as $o) {
             border: 1px solid #a7f3d0;
         }
 
-        /* Tombol Pengubah Status Kondisi Selesai (True / False) */
         .btn-toggle-status {
             padding: 10px 16px;
             font-size: 0.82rem;
@@ -557,7 +540,6 @@ foreach ($orders as $o) {
             transform: scale(0.95);
         }
 
-        /* Empty State (Membentang Penuh di Grid) */
         .empty-orders {
             grid-column: 1 / -1;
             text-align: center;
@@ -592,7 +574,6 @@ foreach ($orders as $o) {
 <body>
 
 <div class="dashboard-container">
-    <!-- Header Full-Width -->
     <header class="dash-header">
         <div class="brand-title">
             <h1>List Pesanan <span>Icikiwir</span></h1>
@@ -611,9 +592,7 @@ foreach ($orders as $o) {
         </div>
     </header>
 
-    <!-- Main Responsive Content Wrapper -->
     <div class="content-wrapper">
-        <!-- Statistics Grid -->
         <section class="stats-grid">
             <div class="stat-card total">
                 <div class="stat-num" id="statTotal"><?= $total_pesanan; ?></div>
@@ -629,14 +608,12 @@ foreach ($orders as $o) {
             </div>
         </section>
 
-        <!-- Filter Nav -->
         <nav class="filter-nav">
             <button class="filter-pill active" onclick="filterPesanan('all', this)">Semua (<?= $total_pesanan; ?>)</button>
             <button class="filter-pill" onclick="filterPesanan('pending', this)">⏳ Belum Selesai (<?= $total_pending; ?>)</button>
             <button class="filter-pill" onclick="filterPesanan('done', this)">✅ Selesai (<?= $total_selesai; ?>)</button>
         </nav>
 
-        <!-- Feed Daftar Pesanan (Responsive Grid) -->
         <main class="orders-feed" id="ordersList">
             <?php if (empty($orders)): ?>
                 <div class="empty-orders">
@@ -652,7 +629,6 @@ foreach ($orders as $o) {
                     $statusText = $isDone ? 'Selesai (True)' : 'Belum Selesai (False)';
                 ?>
                 <article class="order-card <?= $isDone ? 'done-state' : ''; ?>" id="orderCard-<?= $id_custom; ?>" data-status="<?= $isDone ? 'done' : 'pending'; ?>">
-                    <!-- Card Header -->
                     <div class="card-top">
                         <div class="order-id-badge">
                             <span>🧾</span> #ORDER-<?= str_pad($id_custom, 4, '0', STR_PAD_LEFT); ?>
@@ -662,7 +638,6 @@ foreach ($orders as $o) {
                         </div>
                     </div>
 
-                    <!-- Customer Details & Time -->
                     <div class="card-body">
                         <div class="customer-meta">
                             <div>
@@ -674,7 +649,6 @@ foreach ($orders as $o) {
                             </div>
                         </div>
 
-                        <!-- Items Detail Box -->
                         <div class="items-box <?= $isDone ? 'done-bg' : ''; ?>">
                             <div>
                                 <?php foreach ($order['items'] as $item): ?>
@@ -702,14 +676,12 @@ foreach ($orders as $o) {
                         </div>
                     </div>
 
-                    <!-- Footer Card: Ubah Status Kondisi Selesai (True / False) -->
                     <footer class="card-footer">
                         <div class="status-badge <?= $statusClass; ?>" id="badge-<?= $id_custom; ?>">
                             <span><?= $isDone ? '✅' : '⏳'; ?></span>
                             <span id="badgeText-<?= $id_custom; ?>"><?= $statusText; ?></span>
                         </div>
 
-                        <!-- Tombol Ubah Status Selesai True / False -->
                         <div id="btnContainer-<?= $id_custom; ?>">
                             <?php if (!$isDone): ?>
                             <button class="btn-toggle-status mark-done" onclick="ubahStatus(<?= $id_custom; ?>, 1)">
@@ -730,7 +702,6 @@ foreach ($orders as $o) {
 </div>
 
 <script>
-// Fungsi untuk mengubah status kondisi 'selesai' menjadi true (1) atau false (0)
 async function ubahStatus(id_custom, statusTarget) {
     const btnContainer = document.getElementById(`btnContainer-${id_custom}`);
     const badge = document.getElementById(`badge-${id_custom}`);
@@ -756,9 +727,7 @@ async function ubahStatus(id_custom, statusTarget) {
         const result = await response.json();
 
         if (result.success) {
-            // Update UI secara realtime tanpa reload
             if (statusTarget === 1) {
-                // Berubah ke SELESAI (True)
                 card.dataset.status = 'done';
                 card.classList.add('done-state');
                 badge.className = 'status-badge done';
@@ -769,7 +738,6 @@ async function ubahStatus(id_custom, statusTarget) {
                     </button>
                 `;
             } else {
-                // Berubah ke BELUM SELESAI (False)
                 card.dataset.status = 'pending';
                 card.classList.remove('done-state');
                 badge.className = 'status-badge pending';
@@ -791,7 +759,6 @@ async function ubahStatus(id_custom, statusTarget) {
     }
 }
 
-// Update hitungan statistik di atas
 function updateStatistikCount() {
     const allCards = document.querySelectorAll('.order-card');
     let pendingCount = 0;
@@ -811,7 +778,6 @@ function updateStatistikCount() {
     if (statDone) statDone.textContent = doneCount;
 }
 
-// Filter tampilan pesanan (Semua, Belum Selesai, Selesai)
 function filterPesanan(mode, el) {
     document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
     el.classList.add('active');

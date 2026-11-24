@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Resto Icikiwir Gejesgejes - Selamat Datang!</title>
-    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Fredoka:wght@600;700&display=swap" rel="stylesheet">
@@ -37,7 +36,6 @@
             overflow-x: hidden;
         }
 
-        /* Full-Bleed Responsive Container */
         .page-container {
             position: relative;
             width: 100%;
@@ -51,7 +49,6 @@
             align-items: center;
         }
 
-        /* Background Blurred Image (Full Screen di Mobile & Desktop) */
         .bg-blur-image {
             position: fixed;
             inset: -20px;
@@ -63,7 +60,6 @@
             z-index: 1;
         }
 
-        /* White-Pink Overlay */
         .bg-overlay {
             position: fixed;
             inset: 0;
@@ -76,7 +72,6 @@
             z-index: 2;
         }
 
-        /* Header Top Nav (Menyesuaikan Lebar Layar) */
         .top-nav {
             position: relative;
             z-index: 10;
@@ -112,7 +107,6 @@
             box-shadow: 0 6px 16px rgba(255, 77, 136, 0.3);
         }
 
-        /* Hero Center Content (Fluida Berdasarkan Window Scale) */
         .hero-content {
             position: relative;
             z-index: 10;
@@ -169,7 +163,6 @@
             font-weight: 500;
         }
 
-        /* Big "Pesan" Button */
         .btn-pesan-big {
             display: inline-flex;
             align-items: center;
@@ -203,7 +196,6 @@
             font-size: clamp(1.35rem, 2vw, 1.6rem);
         }
 
-        /* Footer info */
         .footer-note {
             position: relative;
             z-index: 10;
@@ -213,7 +205,6 @@
             text-align: center;
         }
 
-        /* Desktop Enhancement: Bingkai Glassmorphism Halus Saat Layar Lebar */
         @media (min-width: 768px) {
             .hero-content {
                 background: rgba(255, 255, 255, 0.52);
@@ -225,7 +216,6 @@
             }
         }
 
-        /* Toast notification for order success */
         .toast-popup {
             position: fixed;
             top: 24px;
@@ -257,7 +247,6 @@
 <body>
 
 <div class="page-container">
-    <!-- Blurred Photo from assets/images.jpg -->
     <div class="bg-blur-image"></div>
     <div class="bg-overlay"></div>
 
@@ -283,14 +272,12 @@
     </script>
     <?php endif; ?>
 
-    <!-- Pojok Kanan Atas: Tombol Masuk -->
     <header class="top-nav">
         <a href="login.php" class="login-link">
             <span>Masuk</span>
         </a>
     </header>
 
-    <!-- Di Tengah: Logo, Nama Restoran, dan Tombol Pesan Besar -->
     <main class="hero-content">
         <div class="brand-badge">✨ Sensasi Gurih & Pedas ✨</div>
         <h1 class="restaurant-name">
@@ -306,7 +293,6 @@
         </a>
     </main>
 
-    <!-- Footer info -->
     <footer class="footer-note">
         Available at UPN Veteran "Yogyakarta" &bull; Campus 2
     </footer>
